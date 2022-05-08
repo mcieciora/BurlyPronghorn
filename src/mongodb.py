@@ -1,18 +1,18 @@
+from pymongo import MongoClient
+
+
 class MongoDb:
     def __init__(self):
         pass
 
-    def insert(self, collection, data):
+    def insert(self, data):
         pass
 
-    def update(self, collection, query, data):
+    def update(self, query, data):
         pass
 
-    def find(self, collection, query):
+    def find(self, query):
         pass
 
-    def delete(self, collection, query):
-        pass
-
-    def _get_collection_by_name(self, collection):
+    def delete(self, query):
         pass
