@@ -11,14 +11,14 @@ pipeline {
             parallel {
                 stage('Lint code') {
                     steps {
-                        sh 'docker run test_image --name lint_code -m pycodestyle --filename=*.py --max-line-length=120 .'
+                        sh 'docker run --name lint_code test_image -m pycodestyle --filename=*.py --max-line-length=120 .'
                     }
                 }
 
                 stage('Unit tests') {
                     steps {
                         sh 'docker run --name mongodb_test -d -p 27017:27017 mongo'
-                        sh 'docker run test_image --name unit_test -m pytest -m unit automated_tests/'
+                        sh 'docker run --name unit_test test_image -m pytest -m unit automated_tests/'
                         sh 'docker stop --name mongodb_test'
                     }
                 }
