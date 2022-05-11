@@ -1,19 +1,24 @@
 pipeline {
     agent any
     stages {
+        stage ('Prepare test container'){
+            steps {
+                sh 'docker build -f automated_tests/Dockerfile -t test_image .'
+            }
+        }
+
         stage('Code quality and unit tests'){
             parallel {
                 stage('Lint code') {
                     steps {
-                        sh 'python3.10 -m pycodestyle --filename=*.py --max-line-length=120 .'
+                        sh 'docker run test_image --name lint_code -m pycodestyle --filename=*.py --max-line-length=120 .'
                     }
                 }
 
                 stage('Unit tests') {
                     steps {
-                        sh 'python3.10 -m pip install -r requirements.txt'
                         sh 'docker run --name mongodb_test -d -p 27017:27017 mongo'
-                        sh 'python3.10 -m pytest -m unit automated_tests/'
+                        sh 'docker run test_image --name unit_test -m pytest -m unit automated_tests/'
                         sh 'docker stop --name mongodb_test'
                     }
                 }
@@ -31,10 +36,9 @@ pipeline {
         stage('Automated tests') {
             steps {
                 script {
-                    sh 'python3.10 -m pip install -r requirements.txt'
                     sh 'docker start mongodb_test'
                     sh "docker run -d -p 8000:8000 --name tested_image burly_pronghorn:${env.GIT_COMMIT}"
-                    sh 'python3.10 -m pytest automated_tests/ --log-cli-level=10'
+                    sh 'docker run test_image --name automated_tests -m pytest automated_tests/ --log-cli-level=10'
                     sh 'docker stop mongodb_test'
                     sh 'docker stop tested_image'
                 }
