@@ -10,44 +10,40 @@ pipeline {
         }
 
         stage ('Unit and regular tests'){
-            parallel {
-                stage('Unit tests') {
-                    steps {
+            stage('Unit tests') {
+                steps {
+                    script {
                         dir('automated_tests/') {
+                            sh 'tox -e regular'
                             sh 'tox -e lint'
                         }
                     }
                 }
-                stage('Automated tests') {
-                    steps {
+                post {
+                    always {
                         script {
-                            dir('automated_tests/') {
-                                sh 'tox -e regular'
-                            }
+                            sh 'docker compose down'
                         }
                     }
                 }
             }
         }
-        post {
-            always {
-                script {
-                    sh 'docker compose down'
-                }
-            }
-        }
+
 
         stage('Build and deploy image') {
-            when {
-                branch pattern "release/*"
-            }
             steps {
                 script {
                     sh "docker build -t burly_pronghorn:${env.GIT_COMMIT} ."
-                    sh "docker run -d -p 5000:5000 --restart=always --name registry -v /mnt/registry:/var/lib/registry registry:2"
-                    sh "docker image tag burly_pronghorn:${env.GIT_COMMIT} localhost:5000/burly_pronghorn:${env.GIT_COMMIT}"
-                    sh "docker push localhost:5000/burly_pronghorn:${env.GIT_COMMIT}"
-                    sh "docker stop registry"
+
+                    if (env.BRANCH_NAME.contains('release/')) {
+                        sh "docker image tag burly_pronghorn:${env.GIT_COMMIT} mcieciora/burly_pronghorn:${env.GIT_COMMIT}"
+                        sh "docker push mcieciora/burly_pronghorn:${env.GIT_COMMIT}"
+                    } else {
+                        sh "docker run -d -p 5000:5000 --restart=always --name registry -v /mnt/registry:/var/lib/registry registry:2"
+                        sh "docker image tag burly_pronghorn:${env.GIT_COMMIT} localhost:5000/burly_pronghorn:${env.GIT_COMMIT}"
+                        sh "docker push localhost:5000/burly_pronghorn:${env.GIT_COMMIT}"
+                        sh "docker stop registry"
+                    }
                 }
             }
         }
