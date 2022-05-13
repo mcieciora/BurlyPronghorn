@@ -10,20 +10,18 @@ pipeline {
         }
 
         stage ('Unit and regular tests'){
-            stage('Unit tests') {
-                steps {
-                    script {
-                        dir('automated_tests/') {
-                            sh 'tox -e regular'
-                            sh 'tox -e lint'
-                        }
+            steps {
+                script {
+                    dir('automated_tests/') {
+                        sh 'tox -e regular'
+                        sh 'tox -e lint'
                     }
                 }
-                post {
-                    always {
-                        script {
-                            sh 'docker compose down'
-                        }
+            }
+            post {
+                always {
+                    script {
+                        sh 'docker compose down'
                     }
                 }
             }
