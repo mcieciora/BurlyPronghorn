@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  db:
+    image: mongo:latest
+    hostname: mongodb
+    ports:
+      - "27017:27017"
+  api:
+    build: .
+    ports:
+      - "7999:7999"
+    links:
+      - db

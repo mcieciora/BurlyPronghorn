@@ -1,6 +1,6 @@
 from pytest import fixture
 from logging import basicConfig, getLogger, INFO
-from src.mongodb import MongoDb
+from src import mongodb
 
 
 @fixture
@@ -11,7 +11,7 @@ def logger():
 
 @fixture
 def mongo_database():
-    database = MongoDb()
+    database = mongodb.MongoDb()
     yield database
     database.main.drop()
 

@@ -1,8 +1,6 @@
-FROM ubuntu:22.04
+FROM python:3.10.4-alpine3.15
 
 MAINTAINER mcieciora
-
-RUN apt-get update && apt-get install -y python3-pip python3-dev
 
 COPY ./src /app
 
@@ -12,6 +10,4 @@ WORKDIR /app
 
 RUN pip install -r requirements.txt
 
-ENTRYPOINT [ "python3.10" ]
-
-CMD [ "api.py" ]
+CMD [ "python3", "api.py" ]
