@@ -25,7 +25,7 @@ def test__smoke__repeated_keys_in_payload():
 @mark.smoke
 def test__smoke__basic_payload():
     test_data = {'object_name': 'test_name', 'note': 'example_note', 'related_tasks': 'a', 'active_days': '0'}
-    return_data = get('http://localhost:7999/insert', params=test_data)
+    return_data = get('http://0.0.0.0:7999/insert', params=test_data)
     assert return_data.status_code == 200, f'Status code is not 200: {return_data.reason}'
 
 

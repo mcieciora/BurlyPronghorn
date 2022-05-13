@@ -9,24 +9,28 @@ pipeline {
             }
         }
 
-        stage ('Unit and regular tests'){
-            steps {
-                script {
-                    dir('automated_tests/') {
-                        sh 'tox -e regular'
-                        sh 'tox -e lint'
+        stage ('Automated tests'){
+            parallel {
+                stage ('Code linting'){
+                    steps {
+                        script {
+                            dir('automated_tests/') {
+                                sh 'tox -e lint'
+                            }
+                        }
                     }
                 }
-            }
-            post {
-                always {
-                    script {
-                        sh 'docker compose down'
+                stage ('Regular tests'){
+                    steps {
+                        script {
+                            dir('automated_tests/') {
+                                sh 'tox -e regular'
+                            }
+                        }
                     }
                 }
             }
         }
-
 
         stage('Build and deploy image') {
             steps {
@@ -50,6 +54,7 @@ pipeline {
         always {
             cleanWs()
             script{
+                sh 'docker compose down'
                 sh 'docker system prune -af'
             }
         }
