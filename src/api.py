@@ -49,7 +49,8 @@ class Insert(Api):
         super().__init__(payload_dict=payload_dict)
 
     def action(self):
-        pass
+        MongoDb().insert(self.payload_dict)
+        return dict(data=[{"status": 'OK'}])
 
 
 class Delete(Api):
