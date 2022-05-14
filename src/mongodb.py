@@ -3,16 +3,33 @@ from pymongo import MongoClient
 
 class MongoDb:
     def __init__(self):
-        pass
+        self.client = MongoClient(host='mongodb', port=27017)
+        self.db = self.client['burly_pronghorn']
+        self.main = self.db['main']
 
     def insert(self, data):
-        pass
+        """
+        Insert one document to mongo Database.
 
-    def update(self, query, data):
-        pass
+        :param data: validated data dict
+        :return: None
+        """
+        self.main.insert_one(data)
 
     def find(self, query):
-        pass
+        """
+        Find one document in mongo Database.
+
+        :param query: query dict
+        :return: None
+        """
+        return self.main.find(query)
 
     def delete(self, query):
-        pass
+        """
+        Delete one document from mongo Database.
+
+        :param query: query dict
+        :return: None
+        """
+        self.main.delete_one(query)
