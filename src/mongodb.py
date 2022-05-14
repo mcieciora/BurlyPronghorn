@@ -8,10 +8,28 @@ class MongoDb:
         self.main = self.db['main']
 
     def insert(self, data):
-        pass
+        """
+        Insert one document to mongo Database.
+
+        :param data: validated data dict
+        :return: None
+        """
+        self.main.insert_one(data)
 
     def find(self, query):
-        pass
+        """
+        Find one document in mongo Database.
+
+        :param query: query dict
+        :return: None
+        """
+        return self.main.find(query)
 
     def delete(self, query):
-        pass
+        """
+        Delete one document from mongo Database.
+
+        :param query: query dict
+        :return: None
+        """
+        self.main.delete_one(query)
