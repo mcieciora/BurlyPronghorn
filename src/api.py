@@ -61,4 +61,4 @@ class Delete(Api):
         pass
 
 
-run(host='localhost', port=7999)
+run(host='0.0.0.0', port=7999)
