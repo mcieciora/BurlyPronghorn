@@ -52,11 +52,11 @@ pipeline {
     }
     post {
         always {
-            cleanWs()
             script{
                 sh 'docker compose down'
                 sh 'docker system prune -af'
             }
+            cleanWs()
         }
     }
 }
