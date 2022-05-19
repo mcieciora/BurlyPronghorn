@@ -1,5 +1,5 @@
-from bottle import request, route, run
-from src.mongodb import MongoDb
+from bottle import request, route, run, HTTPResponse
+from mongodb import MongoDb
 
 
 @route('/<request_type>')
@@ -11,9 +11,11 @@ def index(request_type):
         'delete': Delete
     }
     payload = request.query.dict
-    if verify_payload(request.query.dict):
+    if verify_payload(payload):
         request_object = requests[request_type](payload)
-        request_object.action()
+        return request_object.action()
+    else:
+        return HTTPResponse(status=400, body=dict(data=[{'status': 'Incorrect payload'}]))
 
 
 def verify_payload(actual_dict):
@@ -33,7 +35,7 @@ class Api:
             self.payload_dict[key] = value[0]
 
     def action(self):
-        return dict(data=[{"status": 'OK'}])
+        return dict(data=[{'status': 'OK'}])
 
 
 class Find(Api):
@@ -50,7 +52,7 @@ class Insert(Api):
 
     def action(self):
         MongoDb().insert(self.payload_dict)
-        return dict(data=[{"status": 'OK'}])
+        return dict(data=[{'status': 'OK'}])
 
 
 class Delete(Api):
