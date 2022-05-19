@@ -25,6 +25,8 @@ def verify_payload(actual_dict):
         return_value = False
     if sorted(actual_dict) != sorted(expected_keys):
         return_value = False
+    if all([False if not value[0] else True for value in actual_dict.values()]):
+        return_value = False
     return return_value
 
 

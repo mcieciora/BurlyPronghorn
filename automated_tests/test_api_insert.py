@@ -21,7 +21,7 @@ def test__unit__too_long_payload():
 
 @mark.unittest
 def test__unit__wrong_keys_in_payload():
-    test_data = {'object_name': 'test_name', 'note': 'example_note', 'related_tasks': 'NaN', 'active_days': '0'}
+    test_data = {'object_name': 'test_name', 'note': 'example_note', 'tasks': 'NaN', 'active_days': '0'}
     return_data = get('http://0.0.0.0:7999/insert', params=test_data)
     assert return_data.status_code == 400, f'Status code is not 200: {return_data.reason}'
     assert 'Incorrect payload' in str(return_data.content)
