@@ -41,7 +41,7 @@ class Find(Api):
         for key, value in self.payload_dict.items():
             if key not in expected_keys:
                 return_value = False
-            if value[0] == '':
+            if value == '':
                 return_value = False
         return return_value
 
@@ -61,7 +61,7 @@ class Insert(Api):
             return_value = False
         if sorted(self.payload_dict) != sorted(expected_keys):
             return_value = False
-        if not all([False if not value[0] else True for value in self.payload_dict.values()]):
+        if not all([False if not value else True for value in self.payload_dict.values()]):
             return_value = False
         return return_value
 
@@ -80,7 +80,7 @@ class Delete(Api):
         for key, value in self.payload_dict.items():
             if key not in expected_keys:
                 return_value = False
-            if value[0] == '':
+            if value == '':
                 return_value = False
         return return_value
 
