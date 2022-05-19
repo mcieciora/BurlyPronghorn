@@ -11,23 +11,11 @@ def index(request_type):
         'delete': Delete
     }
     payload = request.query.dict
-    if verify_payload(payload):
-        request_object = requests[request_type](payload)
+    request_object = requests[request_type](payload)
+    if request_object.verify_payload():
         return request_object.action()
     else:
         return HTTPResponse(status=400, body=dict(data=[{'status': 'Incorrect payload'}]))
-
-
-def verify_payload(actual_dict):
-    return_value = True
-    expected_keys = ['object_name', 'note', 'related_tasks', 'active_days']
-    if len(expected_keys) != len(actual_dict):
-        return_value = False
-    if sorted(actual_dict) != sorted(expected_keys):
-        return_value = False
-    if not all([False if not value[0] else True for value in actual_dict.values()]):
-        return_value = False
-    return return_value
 
 
 class Api:
@@ -35,6 +23,9 @@ class Api:
         self.payload_dict = payload_dict
         for key, value in self.payload_dict.items():
             self.payload_dict[key] = value[0]
+
+    def verify_payload(self):
+        pass
 
     def action(self):
         return dict(data=[{'status': 'OK'}])
@@ -44,13 +35,35 @@ class Find(Api):
     def __init__(self, payload_dict):
         super().__init__(payload_dict=payload_dict)
 
+    def verify_payload(self):
+        return_value = True
+        expected_keys = ['object_name']
+        for key, value in self.payload_dict.items():
+            if key not in expected_keys:
+                return_value = False
+            if value[0] == '':
+                return_value = False
+        return return_value
+
     def action(self):
-        pass
+        return_value = MongoDb().find(self.payload_dict)
+        return dict(data=return_value)
 
 
 class Insert(Api):
     def __init__(self, payload_dict):
         super().__init__(payload_dict=payload_dict)
+
+    def verify_payload(self):
+        return_value = True
+        expected_keys = ['object_name', 'note', 'related_tasks', 'active_days']
+        if len(expected_keys) != len(self.payload_dict):
+            return_value = False
+        if sorted(self.payload_dict) != sorted(expected_keys):
+            return_value = False
+        if not all([False if not value[0] else True for value in self.payload_dict.values()]):
+            return_value = False
+        return return_value
 
     def action(self):
         MongoDb().insert(self.payload_dict)
@@ -61,8 +74,19 @@ class Delete(Api):
     def __init__(self, payload_dict):
         super().__init__(payload_dict=payload_dict)
 
+    def verify_payload(self):
+        return_value = True
+        expected_keys = ['object_name']
+        for key, value in self.payload_dict.items():
+            if key not in expected_keys:
+                return_value = False
+            if value[0] == '':
+                return_value = False
+        return return_value
+
     def action(self):
-        pass
+        MongoDb().delete(self.payload_dict)
+        return dict(data=[{"status": 'OK'}])
 
 
 run(host='0.0.0.0', port=7999)

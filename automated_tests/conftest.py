@@ -18,7 +18,6 @@ def mongo_database():
 
 @fixture
 def mongo_database_one_record(mongo_database):
-    mongo_database.insert({'test_data': 'test_value'})
-    test_collection = list(mongo_database.main.find())
-    assert len(test_collection) == 1, 'main collection size is not equal 1'
+    mongo_database.insert({'object_name': 'test_name', 'note': 'example_note', 'related_tasks': 'NaN',
+                           'active_days': '0'})
     yield mongo_database
