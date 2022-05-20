@@ -57,7 +57,11 @@ pipeline {
             script{
                 sh 'docker compose down'
                 sh 'docker system prune -af'
+                sh 'pwd'
+                sh 'ls'
             }
+            archiveArtifacts artifacts: 'result.xml', fingerprint: true
+            junit 'result.xml'
             cleanWs()
         }
     }
