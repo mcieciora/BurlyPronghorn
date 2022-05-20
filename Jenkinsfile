@@ -36,8 +36,8 @@ pipeline {
             steps {
                 script {
                     def commit_value = env.GIT_COMMIT.take(7)
-                    def tag_value = 'dev-${commit_value}'
-                    echo 'Tagging with ${tag_value}'
+                    def tag_value = "dev-${commit_value}"
+                    echo "Tagging with ${tag_value}"
                     sh "docker build -t burly_pronghorn:${tag_value} ."
                     if (env.BRANCH_NAME.contains('develop/')) {
                         sh "docker run -d -p 5000:5000 --restart=always --name registry -v /mnt/registry:/var/lib/registry registry:2"
