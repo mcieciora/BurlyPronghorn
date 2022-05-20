@@ -33,18 +33,21 @@ pipeline {
         }
 
         stage('Build and deploy image') {
+            when {
+                expression {
+                    return env.BRANCH_NAME.contains('develop/')
+                }
+            }
             steps {
                 script {
                     def commit_value = env.GIT_COMMIT.take(7)
                     def tag_value = "dev-${commit_value}"
                     echo "Tagging with ${tag_value}"
                     sh "docker build -t burly_pronghorn:${tag_value} ."
-                    if (env.BRANCH_NAME.contains('develop/')) {
-                        sh "docker run -d -p 5000:5000 --restart=always --name registry -v /mnt/registry:/var/lib/registry registry:2"
-                        sh "docker image tag burly_pronghorn:${tag_value} localhost:5000/burly_pronghorn:${tag_value}"
-                        sh "docker push localhost:5000/burly_pronghorn:${tag_value}"
-                        sh "docker stop registry"
-                    }
+                    sh "docker run -d -p 5000:5000 --restart=always --name registry -v /mnt/registry:/var/lib/registry registry:2"
+                    sh "docker image tag burly_pronghorn:${tag_value} localhost:5000/burly_pronghorn:${tag_value}"
+                    sh "docker push localhost:5000/burly_pronghorn:${tag_value}"
+                    sh "docker stop registry"
                 }
             }
         }
@@ -55,8 +58,8 @@ pipeline {
                 sh 'docker compose down'
                 sh 'docker system prune -af'
             }
-            junit 'automated_tests/*.xml'
-            cleanWs()
+            junit '**/*.xml'
+            // cleanWs()
         }
     }
 }
