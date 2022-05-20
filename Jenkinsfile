@@ -20,13 +20,23 @@ pipeline {
                         }
                     }
                 }
-                stage ('Regular tests'){
+                stage ('Unit tests'){
                     steps {
                         script {
                             dir('automated_tests/') {
-                                sh 'tox -e regular'
+                                sh 'tox -e unittest'
                             }
                         }
+                    }
+                }
+            }
+        }
+
+        stage ('Regular tests'){
+            steps {
+                script {
+                    dir('automated_tests/') {
+                        sh 'tox -e regular'
                     }
                 }
             }
