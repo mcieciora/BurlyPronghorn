@@ -1,24 +1,9 @@
 from pytest import fixture
-from logging import basicConfig, getLogger, INFO
-from src import mongodb
+from requests import get
 
 
 @fixture
-def logger():
-    basicConfig(level=INFO)
-    return getLogger()
-
-
-@fixture
-def mongo_database():
-    database = mongodb.MongoDb()
-    yield database
-    database.main.drop()
-
-
-@fixture
-def mongo_database_one_record(mongo_database):
-    mongo_database.insert({'test_data': 'test_value'})
-    test_collection = list(mongo_database.main.find())
-    assert len(test_collection) == 1, 'main collection size is not equal 1'
-    yield mongo_database
+def database_with_one_record():
+    test_data = {'object_name': 'test_name', 'note': 'example_note', 'related_tasks': 'NaN', 'active_days': '0'}
+    get('http://0.0.0.0:7999/insert', params=test_data)
+    yield

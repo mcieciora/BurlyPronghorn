@@ -21,9 +21,9 @@ class MongoDb:
         Find one document in mongo Database.
 
         :param query: query dict
-        :return: None
+        :return: all queried objects as list of dictionaries
         """
-        return self.main.find(query)
+        return list(self.main.find(query, projection={'_id': False}))
 
     def delete(self, query):
         """

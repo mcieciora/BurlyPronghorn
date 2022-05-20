@@ -33,30 +33,32 @@ pipeline {
         }
 
         stage('Build and deploy image') {
+            when {
+                expression {
+                    return env.BRANCH_NAME.contains('develop/')
+                }
+            }
             steps {
                 script {
-                    sh "docker build -t burly_pronghorn:${env.GIT_COMMIT} ."
-
-                    if (env.BRANCH_NAME.contains('release/')) {
-                        sh "docker image tag burly_pronghorn:${env.GIT_COMMIT} mcieciora/burly_pronghorn:${env.GIT_COMMIT}"
-                        sh "docker push mcieciora/burly_pronghorn:${env.GIT_COMMIT}"
-                    } else {
-                        sh "docker run -d -p 5000:5000 --restart=always --name registry -v /mnt/registry:/var/lib/registry registry:2"
-                        sh "docker image tag burly_pronghorn:${env.GIT_COMMIT} localhost:5000/burly_pronghorn:${env.GIT_COMMIT}"
-                        sh "docker push localhost:5000/burly_pronghorn:${env.GIT_COMMIT}"
-                        sh "docker stop registry"
-                    }
+                    def commit_value = env.GIT_COMMIT.take(7)
+                    def tag_value = "dev-${commit_value}"
+                    echo "Tagging with ${tag_value}"
+                    sh "docker build -t burly_pronghorn:${tag_value} ."
+                    sh "docker run -d -p 5000:5000 --restart=always --name registry -v /mnt/registry:/var/lib/registry registry:2"
+                    sh "docker image tag burly_pronghorn:${tag_value} localhost:5000/burly_pronghorn:${tag_value}"
+                    sh "docker push localhost:5000/burly_pronghorn:${tag_value}"
+                    sh "docker stop registry"
                 }
             }
         }
     }
     post {
         always {
-            cleanWs()
             script{
                 sh 'docker compose down'
                 sh 'docker system prune -af'
             }
+            cleanWs()
         }
     }
 }
