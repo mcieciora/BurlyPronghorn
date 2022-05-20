@@ -55,6 +55,7 @@ pipeline {
                 sh 'docker compose down'
                 sh 'docker system prune -af'
             }
+            junit 'automated_tests/*.xml'
             cleanWs()
         }
     }
