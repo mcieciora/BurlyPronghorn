@@ -11,7 +11,10 @@ def index(request_type):
         'delete': Delete
     }
     payload = request.query.dict
-    request_object = requests[request_type](payload)
+    try:
+        request_object = requests[request_type](payload)
+    except ValueError:
+        return HTTPResponse(status=400, body=dict(data=[{'status': 'Incorrect payload'}]))
     if request_object.verify_payload():
         return request_object.action()
     else:
@@ -22,6 +25,8 @@ class Api:
     def __init__(self, payload_dict):
         self.payload_dict = payload_dict
         for key, value in self.payload_dict.items():
+            if len(self.payload_dict[key]) > 1:
+                raise ValueError
             self.payload_dict[key] = value[0]
 
     def verify_payload(self):
@@ -36,6 +41,7 @@ class Find(Api):
         super().__init__(payload_dict=payload_dict)
 
     def verify_payload(self):
+        # TODO refactor and simplify
         return_value = True
         expected_keys = ['object_name']
         for key, value in self.payload_dict.items():
@@ -55,6 +61,7 @@ class Insert(Api):
         super().__init__(payload_dict=payload_dict)
 
     def verify_payload(self):
+        # TODO refactor and simplify
         return_value = True
         expected_keys = ['object_name', 'note', 'related_tasks', 'active_days']
         if len(expected_keys) != len(self.payload_dict):
@@ -75,6 +82,7 @@ class Delete(Api):
         super().__init__(payload_dict=payload_dict)
 
     def verify_payload(self):
+        # TODO refactor and simplify
         return_value = True
         expected_keys = ['object_name']
         for key, value in self.payload_dict.items():
