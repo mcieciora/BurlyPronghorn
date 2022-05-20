@@ -35,7 +35,7 @@ pipeline {
         stage('Build and deploy image') {
             when {
                 expression {
-                    return env.BRANCH_NAME.contains('develop/')
+                    return env.BRANCH_NAME == 'develop'
                 }
             }
             steps {
@@ -57,8 +57,6 @@ pipeline {
             script{
                 sh 'docker compose down'
                 sh 'docker system prune -af'
-                sh 'pwd'
-                sh 'ls automated_tests'
             }
             archiveArtifacts artifacts: 'automated_tests/result.xml', fingerprint: true
             junit 'automated_tests/result.xml'
