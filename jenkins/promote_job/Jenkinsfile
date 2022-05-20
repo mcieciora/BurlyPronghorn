@@ -1,0 +1,33 @@
+pipeline {
+    parameters {
+        string(name: 'BUILD_VERSION', defaultValue: "0.0", description: 'Provide to-build app version')
+        string(name: 'DOCKER_REGISTRY', defaultValue: "mcieciora/burly_pronghorn", description: 'Provide Docker registry')
+    }
+    agent any
+    stages {
+        stage('Build image') {
+            steps {
+                script {
+                    sh "docker build -t burly_pronghorn:$BUILD_VERSION ."
+                }
+            }
+        }
+
+        stage('Deploy image') {
+            steps {
+                script {
+                    sh "docker image tag burly_pronghorn:$BUILD_VERSION $DOCKER_REGISTRY:$BUILD_VERSION"
+                    sh "docker push $DOCKER_REGISTRY:$BUILD_VERSION"
+                }
+            }
+        }
+    }
+    post {
+        always {
+            cleanWs()
+            script{
+                sh 'docker system prune -af'
+            }
+        }
+    }
+}
