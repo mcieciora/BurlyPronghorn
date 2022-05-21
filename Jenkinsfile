@@ -5,6 +5,7 @@ pipeline {
             steps {
                 script {
                     sh "sed -i 's/mongodb/localhost/1' src/mongodb.py"
+                    sh 'cat src/mongodb.py'
                     sh 'docker compose up -d'
                     dir('automated_tests/') {
                         sh 'tox -e mongodb'
@@ -15,6 +16,7 @@ pipeline {
                 always {
                     script {
                         sh "sed -i 's/localhost/mongodb/1' src/mongodb.py"
+                        sh 'cat src/mongodb.py'
                     }
                 }
             }
