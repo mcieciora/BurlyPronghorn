@@ -14,9 +14,7 @@ pipeline {
             post {
                 always {
                     script {
-                        sh 'docker compose down'
                         sh "sed -i 's/localhost/mongodb/1' src/mongodb.py"
-                        sh 'docker system prune -af'
                     }
                 }
             }
