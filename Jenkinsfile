@@ -1,7 +1,27 @@
 pipeline {
     agent any
     stages {
-        stage('Build compose image') {
+        stage ('MongoDB unittests'){
+            steps {
+                script {
+                    sh "sed -i 's/mongodb/localhost/1' src/mongodb.py"
+                    sh "docker compose up -d"
+                    dir('automated_tests/') {
+                        sh 'tox -e mongodb'
+                    }
+                }
+            }
+            post {
+                always {
+                    script {
+                        sh "docker compose up -d"
+                        sh "sed -i 's/localhost/mongodb/1' src/mongodb.py"
+                    }
+                }
+            }
+        }
+
+        stage('Compose Docker image') {
             steps {
                 script {
                     sh "docker compose up -d"
