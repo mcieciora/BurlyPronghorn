@@ -3,7 +3,7 @@ from requests import get
 
 
 @mark.unittest
-def test__unit__basic_query(database_with_one_record):
+def test__unit__basic_query(database_with_one_record_added_by_api_call):
     query = {'object_name': 'test_name'}
     return_data = get('http://0.0.0.0:7999/delete', params=query)
     assert return_data.status_code == 200, f'Status code is not 200: {return_data.reason}'
