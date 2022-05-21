@@ -89,7 +89,7 @@ pipeline {
                 sh 'docker compose down'
                 sh 'docker system prune -af'
             }
-            archiveArtifacts artifacts: 'automated_tests/result.xml', fingerprint: true
+            archiveArtifacts artifacts: 'automated_tests/*results.xml', fingerprint: true
             junit 'automated_tests/*results.xml'
             cleanWs()
         }
