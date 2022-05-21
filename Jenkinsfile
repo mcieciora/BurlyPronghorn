@@ -1,10 +1,31 @@
 pipeline {
     agent any
     stages {
-        stage('Build compose image') {
+        stage ('MongoDB unittests'){
             steps {
                 script {
-                    sh "docker compose up -d"
+                    sh "sed -i 's/mongodb/localhost/1' src/mongodb.py"
+                    sh 'docker compose up -d'
+                    dir('automated_tests/') {
+                        sh 'tox -e mongodb'
+                    }
+                }
+            }
+            post {
+                always {
+                    script {
+                        sh "sed -i 's/localhost/mongodb/1' src/mongodb.py"
+                        sh 'docker compose down'
+                        sh 'docker system prune -af'
+                    }
+                }
+            }
+        }
+
+        stage('Compose Docker image') {
+            steps {
+                script {
+                    sh 'docker compose up -d'
                 }
             }
         }
@@ -20,13 +41,23 @@ pipeline {
                         }
                     }
                 }
-                stage ('Regular tests'){
+                stage ('Unit tests'){
                     steps {
                         script {
                             dir('automated_tests/') {
-                                sh 'tox -e regular'
+                                sh 'tox -e unittest'
                             }
                         }
+                    }
+                }
+            }
+        }
+
+        stage ('Regular tests'){
+            steps {
+                script {
+                    dir('automated_tests/') {
+                        sh 'tox -e regular'
                     }
                 }
             }
@@ -58,8 +89,8 @@ pipeline {
                 sh 'docker compose down'
                 sh 'docker system prune -af'
             }
-            archiveArtifacts artifacts: 'automated_tests/result.xml', fingerprint: true
-            junit 'automated_tests/result.xml'
+            archiveArtifacts artifacts: 'automated_tests/*results.xml', fingerprint: true
+            junit 'automated_tests/*results.xml'
             cleanWs()
         }
     }
