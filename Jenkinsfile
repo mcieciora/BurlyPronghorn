@@ -90,7 +90,7 @@ pipeline {
                 sh 'docker system prune -af'
             }
             archiveArtifacts artifacts: 'automated_tests/result.xml', fingerprint: true
-            junit 'automated_tests/result.xml'
+            junit 'automated_tests/*results.xml'
             cleanWs()
         }
     }
