@@ -5,7 +5,7 @@ pipeline {
             steps {
                 script {
                     sh "sed -i 's/mongodb/localhost/1' src/mongodb.py"
-                    sh "docker compose up -d"
+                    sh 'docker compose up -d'
                     dir('automated_tests/') {
                         sh 'tox -e mongodb'
                     }
@@ -14,8 +14,9 @@ pipeline {
             post {
                 always {
                     script {
-                        sh "docker compose up -d"
+                        sh 'docker compose down'
                         sh "sed -i 's/localhost/mongodb/1' src/mongodb.py"
+                        sh 'docker system prune -af'
                     }
                 }
             }
@@ -24,7 +25,7 @@ pipeline {
         stage('Compose Docker image') {
             steps {
                 script {
-                    sh "docker compose up -d"
+                    sh 'docker compose up -d'
                 }
             }
         }
