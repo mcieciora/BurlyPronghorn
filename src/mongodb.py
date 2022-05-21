@@ -14,7 +14,13 @@ class MongoDb:
         :param data: validated data dict
         :return: None
         """
-        self.main.insert_one(data)
+        return_value = True
+        query = {'object_name': data['object_name']}
+        if len(list(self.main.find(query))) == 0:
+            self.main.insert_one(data)
+        else:
+            return_value = False
+        return return_value
 
     def find(self, query):
         """
