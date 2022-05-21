@@ -3,7 +3,7 @@ from pymongo import MongoClient
 
 class MongoDb:
     def __init__(self):
-        self.client = MongoClient(host='mongodb', port=27017)
+        self.client = MongoClient(host='localhost', port=27017)
         self.db = self.client['burly_pronghorn']
         self.main = self.db['main']
 
@@ -14,7 +14,13 @@ class MongoDb:
         :param data: validated data dict
         :return: None
         """
-        self.main.insert_one(data)
+        return_value = True
+        query = {'object_name': data['object_name']}
+        if len(list(self.main.find(query))) == 0:
+            self.main.insert_one(data)
+        else:
+            return_value = False
+        return return_value
 
     def find(self, query):
         """
