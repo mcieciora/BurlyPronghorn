@@ -72,7 +72,7 @@ pipeline {
             steps {
                 script {
                     dir('automated_tests/tools') {
-                        def skipped_tests = sh(script: 'python scan_for_skipped_tests.py', returnStdout: true)
+                        def skipped_tests = sh(script: 'python3.10 scan_for_skipped_tests.py', returnStdout: true)
                         echo skipped_tests
                     }
                 }
