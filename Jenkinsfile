@@ -64,11 +64,11 @@ pipeline {
         }
 
         stage('Scan for skipped tests') {
-            when {
-                expression {
-                    return env.BRANCH_NAME == 'develop' || env.BRANCH_NAME == 'release'
-                }
-            }
+//            when {
+//                expression {
+//                    return env.BRANCH_NAME == 'develop' || env.BRANCH_NAME == 'release'
+//                }
+//            }
             steps {
                 script {
                     dir('automated_tests/tools') {
