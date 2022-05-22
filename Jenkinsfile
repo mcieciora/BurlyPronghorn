@@ -64,18 +64,17 @@ pipeline {
         }
 
         stage('Scan for skipped tests') {
-//            when {
-//                expression {
-//                    return env.BRANCH_NAME == 'develop' || env.BRANCH_NAME == 'release'
-//                }
-//            }
+            when {
+                expression {
+                    return env.BRANCH_NAME == 'develop' || env.BRANCH_NAME == 'release'
+                }
+            }
             steps {
                 script {
                     dir('automated_tests/tools') {
                         def skipped_tests = sh(script: 'python3.10 scan_for_skipped_tests.py', returnStdout: true)
-                        echo skipped_tests
                         if (skipped_tests.contains('[ERR]')) {
-                            error('Found @mark.skip among test scripts.')
+                            error('Found @mark.skip among test scripts.\n${skipped_tests}')
                         }
                     }
                 }
