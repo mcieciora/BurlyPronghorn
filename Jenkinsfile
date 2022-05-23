@@ -6,7 +6,7 @@ pipeline {
                 script {
                     def images_to_kill = sh(script: 'docker ps -q', returnStdout: true)
                     if (images_to_kill != '') {
-                        sh "docker kill ${images_to_kill}"
+                        sh "docker kill $(docker ps -q)"
                     }
                     sh 'docker system prune -af'
                 }
