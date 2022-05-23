@@ -13,40 +13,6 @@ pipeline {
             }
         }
 
-        stage ('MongoDB unittests'){
-            steps {
-                script {
-                    sh "sed -i 's/mongodb/localhost/1' src/mongodb.py"
-                    sh 'docker compose up -d'
-                    dir('automated_tests/') {
-                        sh 'tox -e mongodb'
-                    }
-                }
-            }
-            post {
-                always {
-                    script {
-                        sh "sed -i 's/localhost/mongodb/1' src/mongodb.py"
-                        sh 'docker compose down'
-                        sh 'docker system prune -af'
-                    }
-                }
-                failure {
-                    script {
-                        sh 'docker logs api'
-                    }
-                }
-            }
-        }
-
-        stage('Compose Docker image') {
-            steps {
-                script {
-                    sh 'docker compose up -d'
-                }
-            }
-        }
-
         stage ('Automated tests'){
             parallel {
                 stage ('Code linting'){
@@ -58,21 +24,55 @@ pipeline {
                         }
                     }
                 }
-                stage ('Unit tests'){
+                stage ('Api unittests'){
                     steps {
                         script {
+                            sh "sed -i 's/mongodb/src.mongodb/1' src/api.py"
                             dir('automated_tests/') {
                                 sh 'tox -e unittest'
                             }
                         }
                     }
+                   post {
+                        always {
+                            script {
+                                sh "sed -i 's/src.mongodb/mongodb/1' src/api.py"
+                            }
+                        }
+                    }
+                }
+                stage ('MongoDB unittests'){
+                    steps {
+                        script {
+                            sh "sed -i 's/mongodb/localhost/1' src/mongodb.py"
+                            sh 'docker compose up -d'
+                            dir('automated_tests/') {
+                                sh 'tox -e mongodb'
+                            }
+                        }
+                    }
                     post {
+                        always {
+                            script {
+                                sh "sed -i 's/localhost/mongodb/1' src/mongodb.py"
+                                sh 'docker compose down'
+                                sh 'docker system prune -af'
+                            }
+                        }
                         failure {
                             script {
                                 sh 'docker logs api'
                             }
                         }
                     }
+                }
+            }
+        }
+
+        stage('Compose Docker image') {
+            steps {
+                script {
+                    sh 'docker compose up -d'
                 }
             }
         }
