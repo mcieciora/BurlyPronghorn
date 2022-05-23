@@ -38,10 +38,11 @@ def test__unit__find_verify_payload_and_action():
 def test__unit__insert_verify_payload_and_action():
     test_data_with_expected_results = {
         'short_payload':
-            {'data': {'object_name': ['test_name'], 'note': ['example_note'], 'related_tasks': ['NaN']}, 'result': False},
+            {'data': {'object_name': ['test_name'], 'note': ['example_note'], 'related_tasks': ['NaN']},
+             'result': False},
         'too_long_payload':
-            {'data': {'object_name': ['test_name'], 'note': ['example_note'], 'related_tasks': ['NaN'], 'active_days': ['0'],
-                      'additional_key': ['value']}, 'result': False},
+            {'data': {'object_name': ['test_name'], 'note': ['example_note'], 'related_tasks': ['NaN'],
+                      'active_days': ['0'], 'additional_key': ['value']}, 'result': False},
         'wrong_keys':
             {'data': {'object_name': ['test_name'], 'note': ['example_note'], 'tasks': ['NaN'], 'active_days': ['0']},
              'result': False},
@@ -51,8 +52,8 @@ def test__unit__insert_verify_payload_and_action():
         'empty_value':
             {'data': {'object_name': [''], 'note': [''], 'related_tasks': [''], 'active_days': ['']}, 'result': False},
         'basic_payload':
-            {'data': {'object_name': ['test_name'], 'note': ['example_note'], 'related_tasks': ['NaN'], 'active_days': ['0']},
-             'result': True},
+            {'data': {'object_name': ['test_name'], 'note': ['example_note'], 'related_tasks': ['NaN'],
+                      'active_days': ['0']}, 'result': True},
     }
     for test_data in test_data_with_expected_results.values():
         test_object = Insert(test_data['data'])
