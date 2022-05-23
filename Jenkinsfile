@@ -4,7 +4,7 @@ pipeline {
         stage('Docker cleanup') {
             steps {
                 script {
-                    sh 'docker compose down'
+                    sh 'docker kill $(docker ps -q)'
                     sh 'docker system prune -af'
                 }
             }
