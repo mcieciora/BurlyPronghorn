@@ -4,7 +4,15 @@ pipeline {
         stage('Docker cleanup') {
             steps {
                 script {
-                    sh 'docker kill $(docker ps -q)'
+                    def images_to_kill = sh(script: 'docker ps -q', returnStdout: true)
+                    echo images_to_kill
+                    if (images_to_kill = '') {
+                        echo 'Empty.'
+                    }
+                    else {
+                        echo 'Not empty.'
+                    }
+                    sh "docker kill ${images_to_kill}"
                     sh 'docker system prune -af'
                 }
             }
