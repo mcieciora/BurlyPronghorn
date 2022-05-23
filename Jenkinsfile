@@ -4,10 +4,7 @@ pipeline {
         stage('Docker cleanup') {
             steps {
                 script {
-                    def images_to_kill = sh(script: 'docker ps -q', returnStdout: true)
-                    if (images_to_kill != '') {
-                        sh "docker kill $(docker ps -q)"
-                    }
+                    sh "docker ps -aq | xargs docker stop"
                     sh 'docker system prune -af'
                 }
             }
