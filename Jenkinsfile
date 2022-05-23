@@ -1,6 +1,15 @@
 pipeline {
     agent any
     stages {
+        stage('Compose Docker image') {
+            steps {
+                script {
+                    sh 'docker compose down'
+                    sh 'docker system prune -af'
+                }
+            }
+        }
+
         stage ('MongoDB unittests'){
             steps {
                 script {
@@ -17,6 +26,11 @@ pipeline {
                         sh "sed -i 's/localhost/mongodb/1' src/mongodb.py"
                         sh 'docker compose down'
                         sh 'docker system prune -af'
+                    }
+                }
+                failure {
+                    script {
+                        sh 'docker logs api'
                     }
                 }
             }
@@ -49,6 +63,13 @@ pipeline {
                             }
                         }
                     }
+                    post {
+                        failure {
+                            script {
+                                sh 'docker logs api'
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -58,6 +79,13 @@ pipeline {
                 script {
                     dir('automated_tests/') {
                         sh 'tox -e regular'
+                    }
+                }
+            }
+            post {
+                failure {
+                    script {
+                        sh 'docker logs api'
                     }
                 }
             }
