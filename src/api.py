@@ -1,5 +1,5 @@
 from bottle import request, route, run, HTTPResponse
-from src.mongodb import MongoDb
+from mongodb import MongoDb
 
 
 @route('/<request_type>')
