@@ -4,16 +4,11 @@ pipeline {
         stage('Docker cleanup') {
             steps {
                 script {
-                    def return_1 = sh(script: 'docker ps -aq', returnStdout: true)
-                    echo return_1
-                    def return_2 = sh(script: 'docker ps -q', returnStdout: true)
-                    echo return_2
-                    def return_3 = sh(script: 'docker ps -aq', returnStdout: true).trim()
-                    echo return_3
-                    def return_4 = sh(script: 'docker ps -q', returnStdout: true).trim()
-                    echo return_4
-                    // sh "docker ps -aq | xargs docker stop"
-                    // sh 'docker system prune -af'
+                    def running_containers = sh(script: 'docker ps', returnStdout: true)
+                    if (running_containers != '') {
+                        sh "docker ps -aq | xargs docker stop"
+                    }
+                    sh 'docker system prune -af'
                 }
             }
         }
