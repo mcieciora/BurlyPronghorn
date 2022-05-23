@@ -97,4 +97,5 @@ class Delete(Api):
         return dict(data=[{"status": 'OK'}])
 
 
-run(host='0.0.0.0', port=7999)
+if __name__ == '__main__':
+    run(host='0.0.0.0', port=7999)
