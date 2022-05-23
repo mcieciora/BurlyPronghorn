@@ -5,14 +5,9 @@ pipeline {
             steps {
                 script {
                     def images_to_kill = sh(script: 'docker ps -q', returnStdout: true)
-                    echo images_to_kill
-                    if (images_to_kill == '') {
-                        echo 'Empty.'
+                    if (images_to_kill != '') {
+                        sh "docker kill ${images_to_kill}"
                     }
-                    else {
-                        echo 'Not empty.'
-                    }
-                    sh "docker kill ${images_to_kill}"
                     sh 'docker system prune -af'
                 }
             }
