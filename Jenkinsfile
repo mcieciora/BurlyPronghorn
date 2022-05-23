@@ -6,7 +6,7 @@ pipeline {
                 script {
                     def images_to_kill = sh(script: 'docker ps -q', returnStdout: true)
                     echo images_to_kill
-                    if (images_to_kill = '') {
+                    if (images_to_kill == '') {
                         echo 'Empty.'
                     }
                     else {
