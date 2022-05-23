@@ -1,7 +1,7 @@
 pipeline {
     agent any
     stages {
-        stage('Compose Docker image') {
+        stage('Docker cleanup') {
             steps {
                 script {
                     sh 'docker compose down'
