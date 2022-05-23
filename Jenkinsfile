@@ -1,7 +1,7 @@
 pipeline {
     agent any
     stages {
-        stage('Docker cleanup') {
+        stage('Prepare pipeline') {
             steps {
                 script {
                     def running_containers = sh(script: 'docker ps -q', returnStdout: true)
@@ -9,34 +9,9 @@ pipeline {
                         sh "docker ps -aq | xargs docker stop"
                     }
                     sh 'docker system prune -af'
-                }
-            }
-        }
-
-        stage ('MongoDB unittests'){
-            steps {
-                script {
                     sh "sed -i 's/mongodb/localhost/1' src/mongodb.py"
                     sh 'docker compose up -d'
                     sh "sed -i 's/mongodb/src.mongodb/1' src/api.py"
-                    dir('automated_tests/') {
-                        sh 'tox -e mongodb'
-                    }
-                }
-            }
-            post {
-                always {
-                    script {
-                        sh "sed -i 's/src.mongodb/mongodb/1' src/api.py"
-                        sh "sed -i 's/localhost/mongodb/1' src/mongodb.py"
-                        sh 'docker compose down'
-                        sh 'docker system prune -af'
-                    }
-                }
-                failure {
-                    script {
-                        sh 'docker logs api'
-                    }
                 }
             }
         }
@@ -55,16 +30,32 @@ pipeline {
                 stage ('Api unittests'){
                     steps {
                         script {
-                            sh "sed -i 's/mongodb/src.mongodb/1' src/api.py"
                             dir('automated_tests/') {
                                 sh 'tox -e unittest'
                             }
                         }
                     }
-                   post {
+                }
+                stage ('MongoDB unittests'){
+                    steps {
+                        script {
+                            dir('automated_tests/') {
+                                sh 'tox -e mongodb'
+                            }
+                        }
+                    }
+                    post {
                         always {
                             script {
                                 sh "sed -i 's/src.mongodb/mongodb/1' src/api.py"
+                                sh "sed -i 's/localhost/mongodb/1' src/mongodb.py"
+                                sh 'docker compose down'
+                                sh 'docker system prune -af'
+                            }
+                        }
+                        failure {
+                            script {
+                                sh 'docker logs api'
                             }
                         }
                     }
