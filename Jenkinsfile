@@ -1,7 +1,7 @@
 pipeline {
     agent any
     stages {
-        stage('Prepare pipeline') {
+        stage('Prepare for tests') {
             steps {
                 script {
                     def running_containers = sh(script: 'docker ps -q', returnStdout: true)

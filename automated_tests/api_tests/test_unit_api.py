@@ -11,6 +11,7 @@ def test__unit__api_verify_payload_and_action():
     assert return_data == {'data': [{'status': 'OK'}]}, f'Incorrect return data {return_data}'
 
 
+@mark.skip
 @mark.unittest
 def test__unit__find_verify_payload_and_action():
     test_data_with_expected_results = {
@@ -34,6 +35,7 @@ def test__unit__find_verify_payload_and_action():
     assert return_data == {'status': 'OK'}, f'Incorrect return data {return_data}'
 
 
+@mark.skip
 @mark.unittest
 def test__unit__insert_verify_payload_and_action():
     test_data_with_expected_results = {
@@ -69,6 +71,7 @@ def test__unit__insert_verify_payload_and_action():
     assert return_data == {'status': 'OK'}, f'Incorrect return data {return_data}'
 
 
+@mark.skip
 @mark.unittest
 def test__unit__delete_verify_payload_and_action():
     test_data_with_expected_results = {
