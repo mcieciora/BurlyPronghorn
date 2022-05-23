@@ -105,7 +105,7 @@ pipeline {
                     dir('automated_tests/tools') {
                         def skipped_tests = sh(script: 'python3.10 scan_for_skipped_tests.py', returnStdout: true)
                         if (skipped_tests.contains('[ERR]')) {
-                            error('Found @mark.skip among test scripts.\n${skipped_tests}')
+                            error("Found @mark.skip among test scripts.\n${skipped_tests}")
                         }
                     }
                 }
