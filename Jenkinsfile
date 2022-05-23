@@ -4,7 +4,7 @@ pipeline {
         stage('Docker cleanup') {
             steps {
                 script {
-                    def running_containers = sh(script: 'docker ps', returnStdout: true)
+                    def running_containers = sh(script: 'docker ps -q', returnStdout: true)
                     if (running_containers != '') {
                         sh "docker ps -aq | xargs docker stop"
                     }
