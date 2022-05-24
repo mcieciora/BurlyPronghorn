@@ -2,7 +2,7 @@ from glob import glob
 
 
 def main():
-    for file in glob('../*_tests/test_*.py'):
+    for file in glob('../*/test_*.py'):
         with open(file, 'r') as f:
             file_content = f.read()
             pattern = '@mark.skip'
