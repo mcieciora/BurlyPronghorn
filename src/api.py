@@ -96,8 +96,10 @@ class Delete(Api):
         return return_value
 
     def action(self):
-        MongoDb().delete(self.payload_dict)
-        return dict(data=[{"status": 'OK'}])
+        if MongoDb().delete(self.payload_dict):
+            return dict(data=[{"status": 'OK'}])
+        else:
+            return HTTPResponse(status=400, body=dict(data=[{'status': 'No such object'}]))
 
 
 if __name__ == '__main__':
