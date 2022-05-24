@@ -82,6 +82,11 @@ def test__unit__delete_verify_payload_and_action():
         del test_object
     with raises(ValueError):
         Find({'object_name': ['test_name_1', 'test_name_2']})
+    insert_data = {'object_name': ['test_name'], 'note': ['example_note'], 'related_tasks': ['NaN'],
+                   'active_days': ['0']}
+    test_object = Insert(insert_data)
+    return_data = test_object.action()
+    assert return_data == {'data': [{'status': 'OK'}]}, f'Incorrect return data {return_data}'
     test_object = Delete(test_data_with_expected_results['basic_payload']['data'])
     return_data = test_object.action()
     assert return_data == {'data': [{'status': 'OK'}]}, f'Incorrect return data {return_data}'
