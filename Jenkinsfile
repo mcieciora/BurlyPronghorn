@@ -1,7 +1,7 @@
 pipeline {
     agent any
     stages {
-        stage('Docker cleanup') {
+        stage('Prepare for tests') {
             steps {
                 script {
                     def running_containers = sh(script: 'docker ps -q', returnStdout: true)
@@ -9,39 +9,7 @@ pipeline {
                         sh "docker ps -aq | xargs docker stop"
                     }
                     sh 'docker system prune -af'
-                }
-            }
-        }
-
-        stage ('MongoDB unittests'){
-            steps {
-                script {
                     sh "sed -i 's/mongodb/localhost/1' src/mongodb.py"
-                    sh 'docker compose up -d'
-                    dir('automated_tests/') {
-                        sh 'tox -e mongodb'
-                    }
-                }
-            }
-            post {
-                always {
-                    script {
-                        sh "sed -i 's/localhost/mongodb/1' src/mongodb.py"
-                        sh 'docker compose down'
-                        sh 'docker system prune -af'
-                    }
-                }
-                failure {
-                    script {
-                        sh 'docker logs api'
-                    }
-                }
-            }
-        }
-
-        stage('Compose Docker image') {
-            steps {
-                script {
                     sh 'docker compose up -d'
                 }
             }
@@ -58,7 +26,7 @@ pipeline {
                         }
                     }
                 }
-                stage ('Unit tests'){
+                stage ('Api unittests'){
                     steps {
                         script {
                             dir('automated_tests/') {
@@ -66,13 +34,37 @@ pipeline {
                             }
                         }
                     }
+                }
+                stage ('MongoDB unittests'){
+                    steps {
+                        script {
+                            dir('automated_tests/') {
+                                sh 'tox -e mongodb'
+                            }
+                        }
+                    }
                     post {
+                        always {
+                            script {
+                                sh 'docker compose down'
+                                sh 'docker system prune -af'
+                            }
+                        }
                         failure {
                             script {
                                 sh 'docker logs api'
                             }
                         }
                     }
+                }
+            }
+        }
+
+        stage('Compose Docker image') {
+            steps {
+                script {
+                    sh "sed -i 's/localhost/mongodb/1' src/mongodb.py"
+                    sh 'docker compose up -d'
                 }
             }
         }
@@ -112,22 +104,38 @@ pipeline {
             }
         }
 
-        stage('Build and deploy image') {
-            when {
-                expression {
-                    return env.BRANCH_NAME == 'develop'
+        stage('Staging') {
+            parallel {
+                stage('Deploy dev image to local registry') {
+                    when {
+                        expression {
+                            return env.BRANCH_NAME == 'develop'
+                        }
+                    }
+                    steps {
+                        script {
+                            def commit_value = env.GIT_COMMIT.take(7)
+                            def tag_value = "dev-${commit_value}"
+                            echo "Tagging with ${tag_value}"
+                            sh "docker build -t burly_pronghorn:${tag_value} ."
+                            sh "docker run -d -p 5000:5000 --restart=always --name registry -v /mnt/registry:/var/lib/registry registry:2"
+                            sh "docker image tag burly_pronghorn:${tag_value} localhost:5000/burly_pronghorn:${tag_value}"
+                            sh "docker push localhost:5000/burly_pronghorn:${tag_value}"
+                            sh "docker stop registry"
+                        }
+                    }
                 }
-            }
-            steps {
-                script {
-                    def commit_value = env.GIT_COMMIT.take(7)
-                    def tag_value = "dev-${commit_value}"
-                    echo "Tagging with ${tag_value}"
-                    sh "docker build -t burly_pronghorn:${tag_value} ."
-                    sh "docker run -d -p 5000:5000 --restart=always --name registry -v /mnt/registry:/var/lib/registry registry:2"
-                    sh "docker image tag burly_pronghorn:${tag_value} localhost:5000/burly_pronghorn:${tag_value}"
-                    sh "docker push localhost:5000/burly_pronghorn:${tag_value}"
-                    sh "docker stop registry"
+                stage('Run release pipeline') {
+                    when {
+                        expression {
+                            return env.BRANCH_NAME == 'release/*'
+                        }
+                    }
+                    steps {
+                        script {
+                            echo "To be implemented"
+                        }
+                    }
                 }
             }
         }
