@@ -11,7 +11,7 @@ def main(version):
     if exists(readme_location):
         with open(readme_location, 'r') as f:
             file_content = f.read()
-            if version not in file_content:
+            if f'mcieciora/burly_pronghorn:{version}' not in file_content:
                 print(f'[ERR] README.md was not updated with latest image version!')
     else:
         print(f'[ERR] README.md does not exist!')
