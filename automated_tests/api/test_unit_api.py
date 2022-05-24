@@ -19,7 +19,7 @@ def test__unit__find_verify_payload_and_action():
         'wrong_keys':
             {'data': {'object': ['test_name']}, 'result': False},
         'repeated_keys':
-            {'data': {'object_name': ['test_name_1'], 'object_name': ['test_name_2']}, 'result': False},
+            {'data': {'object_name': ['test_name_1', 'test_name_2']}, 'result': False},
         'empty_value':
             {'data': {'object_name': ['']}, 'result': False},
         'basic_payload':
@@ -47,7 +47,7 @@ def test__unit__insert_verify_payload_and_action():
             {'data': {'object_name': ['test_name'], 'note': ['example_note'], 'tasks': ['NaN'], 'active_days': ['0']},
              'result': False},
         'repeated_keys':
-            {'data': {'object_name': ['test_name_1'], 'object_name': ['test_name_2'], 'note': ['example_note'],
+            {'data': {'object_name': ['test_name_1', 'test_name_2'], 'note': ['example_note'],
                       'related_tasks': ['NaN'], 'active_days': ['0']}, 'result': False},
         'empty_value':
             {'data': {'object_name': [''], 'note': [''], 'related_tasks': [''], 'active_days': ['']}, 'result': False},
@@ -77,7 +77,7 @@ def test__unit__delete_verify_payload_and_action():
         'wrong_keys':
             {'data': {'object': ['test_name']}, 'result': False},
         'repeated_keys':
-            {'data': {'object_name': ['test_name_1'], 'object_name': ['test_name_2']}, 'result': False},
+            {'data': {'object_name': ['test_name_1', 'test_name_2']}, 'result': False},
         'empty_value':
             {'data': {'object_name': ['']}, 'result': False},
         'basic_payload':
