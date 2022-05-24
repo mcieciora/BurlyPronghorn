@@ -9,9 +9,8 @@ pipeline {
                         sh "docker ps -aq | xargs docker stop"
                     }
                     sh 'docker system prune -af'
-                    // sh "sed -i 's/mongodb/localhost/1' src/mongodb.py"
+                    sh "sed -i 's/mongodb/localhost/1' src/mongodb.py"
                     sh 'docker compose up -d'
-                    // sh "sed -i 's/mongodb/src.mongodb/1' src/api.py"
                 }
             }
         }
@@ -64,8 +63,7 @@ pipeline {
         stage('Compose Docker image') {
             steps {
                 script {
-                    // sh "sed -i 's/src.mongodb/mongodb/1' src/api.py"
-                    // sh "sed -i 's/localhost/mongodb/1' src/mongodb.py"
+                    sh "sed -i 's/localhost/mongodb/1' src/mongodb.py"
                     sh 'docker compose up -d'
                 }
             }
@@ -106,9 +104,9 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
+        stage('Staging') {
             parallel {
-                stage('Deploy dev to local registry') {
+                stage('Deploy dev image to local registry') {
                     when {
                         expression {
                             return env.BRANCH_NAME == 'develop'
