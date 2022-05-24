@@ -25,7 +25,8 @@ class Api:
     def __init__(self, payload_dict):
         self.payload_dict = payload_dict
         for key, value in self.payload_dict.items():
-            if len(self.payload_dict[key]) > 1:
+            key_value = self.payload_dict[key]
+            if type(key_value) is list and len(key_value) > 1:
                 raise ValueError
             self.payload_dict[key] = value[0]
 
