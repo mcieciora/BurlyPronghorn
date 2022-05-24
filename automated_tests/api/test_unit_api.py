@@ -31,7 +31,7 @@ def test__unit__find_verify_payload_and_action():
         Find({'object_name': ['test_name_1', 'test_name_2']})
     test_object = Find(test_data_with_expected_results['basic_payload']['data'])
     return_data = test_object.action()
-    assert return_data == {'data': [{'status': 'OK'}]}, f'Incorrect return data {return_data}'
+    assert return_data == {'data': []}, f'Incorrect return data {return_data}'
 
 
 @mark.unittest
@@ -66,7 +66,7 @@ def test__unit__insert_verify_payload_and_action():
     get('http://0.0.0.0:7999/insert', params=test_data)
     assert test_object.verify_payload() is True, f'Incorrect verify_payload return for {test_data}'
     return_data = test_object.action()
-    assert return_data == {'data': [{'status': 'OK'}]}, f'Incorrect return data {return_data}'
+    assert return_data == {'status': 'OK'}, f'Incorrect return data {return_data}'
 
 
 @mark.unittest
