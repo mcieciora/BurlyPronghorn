@@ -62,11 +62,6 @@ def test__unit__insert_verify_payload_and_action():
     test_object = Insert(test_data_with_expected_results['basic_payload']['data'])
     return_data = test_object.action()
     assert return_data == {'data': [{'status': 'OK'}]}, f'Incorrect return data {return_data}'
-    test_data = {'object_name': 'test_name', 'note': 'example_note', 'related_tasks': 'NaN', 'active_days': '0'}
-    get('http://0.0.0.0:7999/insert', params=test_data)
-    assert test_object.verify_payload() is True, f'Incorrect verify_payload return for {test_data}'
-    return_data = test_object.action()
-    assert return_data == {'data': [{'status': 'Incorrect request'}]}, f'Incorrect return data {return_data}'
 
 
 @mark.unittest

@@ -77,7 +77,7 @@ class Insert(Api):
         if MongoDb().insert(self.payload_dict):
             return dict(data=[{'status': 'OK'}])
         else:
-            return HTTPResponse(status=400, body=dict(data=[{'status': 'Incorrect request'}]))
+            return HTTPResponse(status=400, body=dict(data=[{'status': 'Object already exists'}]))
 
 
 class Delete(Api):
