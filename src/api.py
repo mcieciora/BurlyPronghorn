@@ -74,8 +74,10 @@ class Insert(Api):
         return return_value
 
     def action(self):
-        MongoDb().insert(self.payload_dict)
-        return dict(data=[{'status': 'OK'}])
+        if MongoDb().insert(self.payload_dict):
+            return dict(data=[{'status': 'OK'}])
+        else:
+            return HTTPResponse(status=400, body=dict(data=[{'status': 'Incorrect request'}]))
 
 
 class Delete(Api):
