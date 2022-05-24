@@ -1,4 +1,4 @@
-from pytest import mark
+from pytest import fixture, mark
 
 
 @mark.mongodb
