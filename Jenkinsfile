@@ -104,38 +104,22 @@ pipeline {
             }
         }
 
-        stage('Staging') {
-            parallel {
-                stage('Deploy dev image to local registry') {
-                    when {
-                        expression {
-                            return env.BRANCH_NAME == 'develop'
-                        }
-                    }
-                    steps {
-                        script {
-                            def commit_value = env.GIT_COMMIT.take(7)
-                            def tag_value = "dev-${commit_value}"
-                            echo "Tagging with ${tag_value}"
-                            sh "docker build -t burly_pronghorn:${tag_value} ."
-                            sh "docker run -d -p 5000:5000 --restart=always --name registry -v /mnt/registry:/var/lib/registry registry:2"
-                            sh "docker image tag burly_pronghorn:${tag_value} localhost:5000/burly_pronghorn:${tag_value}"
-                            sh "docker push localhost:5000/burly_pronghorn:${tag_value}"
-                            sh "docker stop registry"
-                        }
-                    }
+        stage('Deploy dev image to local registry') {
+            when {
+                expression {
+                    return env.BRANCH_NAME == 'develop'
                 }
-                stage('Run release pipeline') {
-                    when {
-                        expression {
-                            return env.BRANCH_NAME == 'release/*'
-                        }
-                    }
-                    steps {
-                        script {
-                            echo "To be implemented"
-                        }
-                    }
+            }
+            steps {
+                script {
+                    def commit_value = env.GIT_COMMIT.take(7)
+                    def tag_value = "dev-${commit_value}"
+                    echo "Tagging with ${tag_value}"
+                    sh "docker build -t burly_pronghorn:${tag_value} ."
+                    sh "docker run -d -p 5000:5000 --restart=always --name registry -v /mnt/registry:/var/lib/registry registry:2"
+                    sh "docker image tag burly_pronghorn:${tag_value} localhost:5000/burly_pronghorn:${tag_value}"
+                    sh "docker push localhost:5000/burly_pronghorn:${tag_value}"
+                    sh "docker stop registry"
                 }
             }
         }
