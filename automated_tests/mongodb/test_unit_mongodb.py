@@ -31,7 +31,7 @@ def test__unit__find_one_record(mongodb_database_with_one_record):
 @mark.mongodb
 def test__unit__delete_one_record(mongodb_database_with_one_record):
     return_value = mongodb_database_with_one_record.delete({'object_name': 'test_name'})
-    assert return_value is True, f'Incorrect return data length: {return_value}'
+    assert return_value is True, f'Incorrect return data value: {return_value}'
     return_data = list(mongodb_database_with_one_record.db['main'].find())
     assert len(return_data) == 0, f'Incorrect return data length: {return_data}'
 
@@ -39,7 +39,7 @@ def test__unit__delete_one_record(mongodb_database_with_one_record):
 @mark.mongodb
 def test__unit__delete_nonexistent_record_empty_database(empty_mongodb_database):
     return_value = empty_mongodb_database.delete({'object_name': 'test_name'})
-    assert return_value is False, f'Incorrect return data length: {return_value}'
+    assert return_value is False, f'Incorrect return data value: {return_value}'
     return_data = list(empty_mongodb_database.db['main'].find())
     assert len(return_data) == 0, f'Incorrect return data length: {return_data}'
 
