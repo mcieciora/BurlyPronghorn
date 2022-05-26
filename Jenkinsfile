@@ -32,8 +32,7 @@ pipeline {
             steps {
                 script {
                     dir('automated_tests/') {
-                        sh 'tox -e unittest'
-                        sh 'tox -e mongodb'
+                        sh 'tox -e unittests'
                     }
                 }
             }
@@ -41,7 +40,7 @@ pipeline {
                 always {
                     script {
                         sh 'docker compose down'
-                        sh 'docker system prune -af'
+                        sh 'docker rmi burlypronghorn_api:latest'
                     }
                 }
                 failure {
@@ -58,7 +57,7 @@ pipeline {
                     sh "sed -i 's/localhost/mongodb/1' src/mongodb.py"
                     sh 'docker compose up -d'
                     dir('automated_tests/') {
-                        sh 'tox -e regular'
+                        sh 'tox -e regression'
                     }
                 }
             }
@@ -115,7 +114,7 @@ pipeline {
                 sh 'docker compose down'
                 sh 'docker system prune -af'
             }
-            archiveArtifacts artifacts: 'automated_tests/*results.xml', fingerprint: true
+            archiveArtifacts artifacts: 'automated_tests/*results.xml, automated_tests/*results.html, automated_tests/assets/', fingerprint: true
             junit 'automated_tests/*results.xml'
             cleanWs()
         }
