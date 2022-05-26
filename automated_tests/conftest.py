@@ -23,4 +23,4 @@ def database_with_one_record_added_by_api_call():
     get('http://0.0.0.0:7999/insert', params=test_data)
     yield
     get('http://0.0.0.0:7999/delete', params={'object_name': 'test_name'})
-    assert get('http://0.0.0.0:7999/find', params={'object_name': 'test_name'}) == '{"data": []}'
+    assert get('http://0.0.0.0:7999/find', params={'object_name': 'test_name'}).content == '{"data": []}'
