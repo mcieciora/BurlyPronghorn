@@ -15,11 +15,14 @@ pipeline {
                 stage ('Setup docker image'){
                     steps {
                         script {
-                            def running_containers = sh(script: 'docker ps -q', returnStdout: true)
+                            def running_containers = sh(script: 'docker ps', returnStdout: true)
                             if (running_containers != '') {
-                                sh "docker ps -aq | xargs docker stop"
+                                sh 'docker ps -aq | xargs docker stop'
                             }
-                            sh 'docker system prune -af'
+                            def all_images = sh(script: 'docker images', returnStdout: true)
+                            if (all_images.contains('burlypronghorn_api')) {
+                                sh "docker rmi burlypronghorn_api -f"
+                            }
                             sh "sed -i 's/mongodb/localhost/1' src/mongodb.py"
                             sh 'docker compose up -d'
                         }
@@ -40,7 +43,8 @@ pipeline {
                 always {
                     script {
                         sh 'docker compose down'
-                        sh 'docker rmi burlypronghorn_api:latest'
+                        sh 'docker images'
+                        sh 'docker rmi burlypronghorn_api:latest -f'
                     }
                 }
                 failure {
@@ -112,7 +116,6 @@ pipeline {
         always {
             script{
                 sh 'docker compose down'
-                sh 'docker system prune -af'
             }
             archiveArtifacts artifacts: 'automated_tests/*results.xml, automated_tests/*results.html, automated_tests/assets/', fingerprint: true
             junit 'automated_tests/*results.xml'
