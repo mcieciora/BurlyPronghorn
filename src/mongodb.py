@@ -38,4 +38,8 @@ class MongoDb:
         :param query: query dict
         :return: None
         """
-        self.main.delete_one(query)
+        if len(list(self.main.find(query))) == 0:
+            return False
+        else:
+            self.main.delete_one(query)
+            return True

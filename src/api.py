@@ -25,7 +25,8 @@ class Api:
     def __init__(self, payload_dict):
         self.payload_dict = payload_dict
         for key, value in self.payload_dict.items():
-            if len(self.payload_dict[key]) > 1:
+            key_value = self.payload_dict[key]
+            if type(key_value) is list and len(key_value) > 1:
                 raise ValueError
             self.payload_dict[key] = value[0]
 
@@ -73,8 +74,10 @@ class Insert(Api):
         return return_value
 
     def action(self):
-        MongoDb().insert(self.payload_dict)
-        return dict(data=[{'status': 'OK'}])
+        if MongoDb().insert(self.payload_dict):
+            return dict(data=[{'status': 'OK'}])
+        else:
+            return HTTPResponse(status=400, body=dict(data=[{'status': 'Object already exists'}]))
 
 
 class Delete(Api):
@@ -93,8 +96,10 @@ class Delete(Api):
         return return_value
 
     def action(self):
-        MongoDb().delete(self.payload_dict)
-        return dict(data=[{"status": 'OK'}])
+        if MongoDb().delete(self.payload_dict):
+            return dict(data=[{"status": 'OK'}])
+        else:
+            return HTTPResponse(status=400, body=dict(data=[{'status': 'No such object'}]))
 
 
 if __name__ == '__main__':

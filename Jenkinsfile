@@ -2,20 +2,6 @@ pipeline {
     agent any
     stages {
         stage('Prepare for tests') {
-            steps {
-                script {
-                    def running_containers = sh(script: 'docker ps -q', returnStdout: true)
-                    if (running_containers != '') {
-                        sh "docker ps -aq | xargs docker stop"
-                    }
-                    sh 'docker system prune -af'
-                    sh "sed -i 's/mongodb/localhost/1' src/mongodb.py"
-                    sh 'docker compose up -d'
-                }
-            }
-        }
-
-        stage ('Automated tests'){
             parallel {
                 stage ('Code linting'){
                     steps {
@@ -26,45 +12,42 @@ pipeline {
                         }
                     }
                 }
-                stage ('Api unittests'){
+                stage ('Setup docker image'){
                     steps {
                         script {
-                            dir('automated_tests/') {
-                                sh 'tox -e unittest'
+                            def running_containers = sh(script: 'docker ps -q', returnStdout: true)
+                            if (running_containers != '') {
+                                sh "docker ps -aq | xargs docker stop"
                             }
-                        }
-                    }
-                }
-                stage ('MongoDB unittests'){
-                    steps {
-                        script {
-                            dir('automated_tests/') {
-                                sh 'tox -e mongodb'
-                            }
-                        }
-                    }
-                    post {
-                        always {
-                            script {
-                                sh 'docker compose down'
-                                sh 'docker system prune -af'
-                            }
-                        }
-                        failure {
-                            script {
-                                sh 'docker logs api'
-                            }
+                            sh 'docker system prune -af'
+                            sh "sed -i 's/mongodb/localhost/1' src/mongodb.py"
+                            sh 'docker compose up -d'
                         }
                     }
                 }
             }
         }
 
-        stage('Compose Docker image') {
+        stage ('MongoDB and API unittests'){
             steps {
                 script {
-                    sh "sed -i 's/localhost/mongodb/1' src/mongodb.py"
-                    sh 'docker compose up -d'
+                    dir('automated_tests/') {
+                        sh 'tox -e unittest'
+                        sh 'tox -e mongodb'
+                    }
+                }
+            }
+            post {
+                always {
+                    script {
+                        sh 'docker compose down'
+                        sh 'docker system prune -af'
+                    }
+                }
+                failure {
+                    script {
+                        sh 'docker logs api'
+                    }
                 }
             }
         }
@@ -72,6 +55,8 @@ pipeline {
         stage ('Regular tests'){
             steps {
                 script {
+                    sh "sed -i 's/localhost/mongodb/1' src/mongodb.py"
+                    sh 'docker compose up -d'
                     dir('automated_tests/') {
                         sh 'tox -e regular'
                     }
