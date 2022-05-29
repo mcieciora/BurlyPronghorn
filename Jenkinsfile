@@ -15,16 +15,15 @@ pipeline {
                 stage ('Setup docker image'){
                     steps {
                         script {
-                            def running_containers = sh(script: 'docker ps', returnStdout: true)
-                            if (running_containers != '') {
-                                sh 'docker ps -aq | xargs docker stop'
+                            dir('automated_tests/') {
+                                sh 'docker compose down'
+                                def all_images = sh(script: 'docker images', returnStdout: true)
+                                if (all_images.contains('burlypronghorn_api')) {
+                                    sh "docker rmi burlypronghorn_api -f"
+                                }
+                                sh "sed -i 's/mongodb/localhost/1' src/mongodb.py"
+                                sh 'docker compose up -d'
                             }
-                            def all_images = sh(script: 'docker images', returnStdout: true)
-                            if (all_images.contains('burlypronghorn_api')) {
-                                sh "docker rmi burlypronghorn_api -f"
-                            }
-                            sh "sed -i 's/mongodb/localhost/1' src/mongodb.py"
-                            sh 'docker compose up -d'
                         }
                     }
                 }
@@ -43,7 +42,6 @@ pipeline {
                 always {
                     script {
                         sh 'docker compose down'
-                        sh 'docker images'
                         sh 'docker rmi burlypronghorn_api:latest -f'
                     }
                 }
