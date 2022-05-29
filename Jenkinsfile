@@ -113,11 +113,11 @@ pipeline {
                 }
 
                 stage('Generate release docs') {
-//                    when {
-//                        expression {
-//                            return env.BRANCH_NAME.contains('release/')
-//                        }
-//                    }
+                    when {
+                        expression {
+                            return env.BRANCH_NAME.contains('release/')
+                        }
+                    }
                     steps {
                         script {
                             dir('automated_tests/tools') {
