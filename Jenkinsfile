@@ -121,10 +121,11 @@ pipeline {
                     steps {
                         script {
                             dir('automated_tests/tools') {
-                                def html_report_generation = sh(script: 'tox -e report python3 generate_html_report_from_xml.py', returnStdout: true)
-                                if (html_report_generation.contains('[ERR]')) {
-                                    error("generate_html_report_from_xml.py script failed due to\n${html_report_generation}")
-                                }
+                                sh 'tox -e report python3 generate_html_report_from_xml.py'
+                                // def html_report_generation = sh(script: 'tox -e report python3 generate_html_report_from_xml.py', returnStdout: true)
+                                // if (html_report_generation.contains('[ERR]')) {
+                                //    error("generate_html_report_from_xml.py script failed due to\n${html_report_generation}")
+                                // }
                             }
                         }
                     }
