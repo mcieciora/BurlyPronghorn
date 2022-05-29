@@ -47,7 +47,7 @@ pipeline {
                 }
                 failure {
                     script {
-                        sh 'docker logs api'
+                        sh 'docker logs burlypronghorn_api'
                     }
                 }
             }
@@ -66,7 +66,7 @@ pipeline {
             post {
                 failure {
                     script {
-                        sh 'docker logs api'
+                        sh 'docker logs burlypronghorn_api'
                     }
                 }
             }
