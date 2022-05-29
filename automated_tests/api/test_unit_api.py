@@ -2,7 +2,7 @@ from pytest import mark, raises
 from src.api import Api, Delete, Find, Insert
 
 
-@mark.unittest
+@mark.unittests
 def test__unit__api_verify_payload_and_action(empty_mongodb_database):
     test_object = Api({})
     assert test_object.verify_payload() is None, f'Incorrect verify_payload return: {test_object}'
@@ -10,7 +10,7 @@ def test__unit__api_verify_payload_and_action(empty_mongodb_database):
     assert return_data == {'data': [{'status': 'OK'}]}, f'Incorrect return data {return_data}'
 
 
-@mark.unittest
+@mark.unittests
 def test__unit__find_verify_payload_and_action(empty_mongodb_database):
     test_data_with_expected_results = {
         'basic_payload':
@@ -33,7 +33,7 @@ def test__unit__find_verify_payload_and_action(empty_mongodb_database):
     assert return_data == {'data': []}, f'Incorrect return data {return_data}'
 
 
-@mark.unittest
+@mark.unittests
 def test__unit__insert_verify_payload_and_action(empty_mongodb_database):
     test_data_with_expected_results = {
         'basic_payload':
@@ -62,7 +62,7 @@ def test__unit__insert_verify_payload_and_action(empty_mongodb_database):
     assert return_data == {'data': [{'status': 'Object already exists'}]}, f'Incorrect return data {return_data}'
 
 
-@mark.unittest
+@mark.unittests
 def test__unit__delete_verify_payload_and_action(empty_mongodb_database):
     test_data_with_expected_results = {
         'basic_payload':
