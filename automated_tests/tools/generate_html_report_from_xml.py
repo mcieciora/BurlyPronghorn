@@ -2,11 +2,13 @@ from jinja2 import Environment, FileSystemLoader
 import xml.etree.ElementTree as ET
 from glob import glob
 from datetime import datetime
-from os import getcwd
+from os.path import abspath, join, dirname
 
 
 def generate_html(date, number_of_tests, tests):
-    env = Environment(loader=FileSystemLoader(getcwd()))
+    root = dirname(abspath(__file__))
+    templates_dir = join(root, '.')
+    env = Environment(loader=FileSystemLoader(templates_dir))
     template = env.get_template('html_report_template.html')
 
     with open('results.html', 'w') as f:
