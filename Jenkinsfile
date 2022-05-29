@@ -138,7 +138,7 @@ pipeline {
                 sh 'docker compose down'
                 sh "docker rmi burlypronghorn_api -f"
             }
-            archiveArtifacts artifacts: 'automated_tests/*results.xml', fingerprint: true
+            archiveArtifacts artifacts: 'automated_tests/*results.xml,automated_tests/results.html', fingerprint: true
             junit 'automated_tests/*results.xml'
             cleanWs()
         }
