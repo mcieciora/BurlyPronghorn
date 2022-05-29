@@ -4,6 +4,8 @@ from glob import glob
 from datetime import datetime
 from os.path import abspath, join, dirname
 
+from os import getcwd
+
 
 def generate_html(date, number_of_tests, tests):
     root = dirname(abspath(__file__))
@@ -34,7 +36,9 @@ def get_xml_data(filename):
 def main():
     all_tests_number = 0
     all_tests_list = []
+    print(getcwd())
     for file in glob('../*.xml'):
+        print(f'Found file {file}')
         try:
             number, table = get_xml_data(file)
             all_tests_number += number
