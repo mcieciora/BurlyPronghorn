@@ -142,7 +142,7 @@ def test__regression__delete_repeated_keys_in_payload():
 
 
 @mark.regression
-def test__unit__delete_nonexistent_record(database_with_one_record_added_by_api_call):
+def test__regression__delete_nonexistent_record(database_with_one_record_added_by_api_call):
     query = {'object_name': 'nan'}
     return_data = get('http://0.0.0.0:7999/delete', params=query)
     assert return_data.status_code == 400, f'Status code is not 400: {return_data.reason}'

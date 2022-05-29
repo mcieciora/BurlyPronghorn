@@ -90,22 +90,44 @@ pipeline {
             }
         }
 
-        stage('Deploy dev image to local registry') {
-            when {
-                expression {
-                    return env.BRANCH_NAME == 'develop'
+        stage('Staging') {
+            parallel {
+                stage('Deploy dev image to local registry') {
+                    when {
+                        expression {
+                            return env.BRANCH_NAME == 'develop'
+                        }
+                    }
+                    steps {
+                        script {
+                            def commit_value = env.GIT_COMMIT.take(7)
+                            def tag_value = "dev-${commit_value}"
+                            echo "Tagging with ${tag_value}"
+                            sh "docker build -t burly_pronghorn:${tag_value} ."
+                            sh "docker run -d -p 5000:5000 --restart=always --name registry -v /mnt/registry:/var/lib/registry registry:2"
+                            sh "docker image tag burly_pronghorn:${tag_value} localhost:5000/burly_pronghorn:${tag_value}"
+                            sh "docker push localhost:5000/burly_pronghorn:${tag_value}"
+                            sh "docker stop registry"
+                        }
+                    }
                 }
-            }
-            steps {
-                script {
-                    def commit_value = env.GIT_COMMIT.take(7)
-                    def tag_value = "dev-${commit_value}"
-                    echo "Tagging with ${tag_value}"
-                    sh "docker build -t burly_pronghorn:${tag_value} ."
-                    sh "docker run -d -p 5000:5000 --restart=always --name registry -v /mnt/registry:/var/lib/registry registry:2"
-                    sh "docker image tag burly_pronghorn:${tag_value} localhost:5000/burly_pronghorn:${tag_value}"
-                    sh "docker push localhost:5000/burly_pronghorn:${tag_value}"
-                    sh "docker stop registry"
+
+                stage('Generate release docs') {
+//                    when {
+//                        expression {
+//                            return env.BRANCH_NAME.contains('release/')
+//                        }
+//                    }
+                    steps {
+                        script {
+                            dir('automated_tests/tools') {
+                            def html_report_generation = sh(script: 'python3.10 generate_html_report_from_xml.py', returnStdout: true)
+                                if (html_report_generation.contains('[ERR]')) {
+                                    error("generate_html_report_from_xml.py script failed due to\n${html_report_generation}")
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -116,7 +138,7 @@ pipeline {
                 sh 'docker compose down'
                 sh "docker rmi burlypronghorn_api -f"
             }
-            archiveArtifacts artifacts: 'automated_tests/*results.xml, automated_tests/*results.html, automated_tests/assets/', fingerprint: true
+            archiveArtifacts artifacts: 'automated_tests/*results.xml', fingerprint: true
             junit 'automated_tests/*results.xml'
             cleanWs()
         }

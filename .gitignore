@@ -41,8 +41,6 @@ pip-delete-this-directory.txt
 htmlcov/
 .tox/
 automated_tests/*results.xml
-automated_tests/*results.html
-automated_tests/assets
 .nox/
 .coverage
 .coverage.*
