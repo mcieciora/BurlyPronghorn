@@ -140,7 +140,6 @@ pipeline {
             }
             archiveArtifacts artifacts: 'automated_tests/*results.xml,automated_tests/results.html', fingerprint: true
             junit 'automated_tests/*results.xml'
-            cleanWs()
         }
     }
 }
