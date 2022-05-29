@@ -114,6 +114,7 @@ pipeline {
         always {
             script{
                 sh 'docker compose down'
+                sh "docker rmi burlypronghorn_api -f"
             }
             archiveArtifacts artifacts: 'automated_tests/*results.xml, automated_tests/*results.html, automated_tests/assets/', fingerprint: true
             junit 'automated_tests/*results.xml'
