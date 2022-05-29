@@ -17,18 +17,18 @@ pipeline {
                         script {
                             dir('automated_tests/') {
                                 sh 'docker compose down'
-                                def all_images = sh(script: 'docker images', returnStdout: true)
-                                if (all_images.contains('burlypronghorn_api')) {
-                                    sh "docker rmi burlypronghorn_api -f"
-                                }
-                                sh "sed -i 's/mongodb/localhost/1' src/mongodb.py"
-                                sh 'docker compose up -d'
+                            }
+                            def all_images = sh(script: 'docker images', returnStdout: true)
+                            if (all_images.contains('burlypronghorn_api')) {
+                                sh "docker rmi burlypronghorn_api -f"
+                            }
+                            sh "sed -i 's/mongodb/localhost/1' src/mongodb.py"
+                            sh 'docker compose up -d'
                             }
                         }
                     }
                 }
             }
-        }
 
         stage ('MongoDB and API unittests'){
             steps {
