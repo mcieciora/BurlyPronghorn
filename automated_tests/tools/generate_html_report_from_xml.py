@@ -37,7 +37,7 @@ def main():
     all_tests_number = 0
     all_tests_list = []
     print(getcwd())
-    for file in glob('../*.xml'):
+    for file in glob('*.xml'):
         print(f'Found file {file}')
         try:
             number, table = get_xml_data(file)
