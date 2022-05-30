@@ -8,12 +8,7 @@ def main(version):
         location = f'../../doc/{version}/{expected_files}'
         if not exists(location):
             print(f'[ERR] {location} does not exist!')
-    if exists(readme_location):
-        with open(readme_location, 'r') as f:
-            file_content = f.read()
-            if f'mcieciora/burly_pronghorn:{version}' not in file_content:
-                print(f'[ERR] README.md was not updated with latest image version!')
-    else:
+    if not exists(readme_location):
         print(f'[ERR] README.md does not exist!')
 
 

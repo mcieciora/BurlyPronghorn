@@ -130,6 +130,25 @@ pipeline {
                         }
                     }
                 }
+
+                stage('Check release files') {
+                    when {
+                        expression {
+                            return env.BRANCH_NAME.contains('release/')
+                        }
+                    }
+                    steps {
+                        script {
+                            def build_version = '0_1'
+                            dir('automated_tests/tools') {
+                                def script_result = sh(script: "python3.10 check_release_doc_files.py ${build_version}", returnStdout: true)
+                                if (script_result.contains('[ERR]')) {
+                                    error("${script_result}")
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
