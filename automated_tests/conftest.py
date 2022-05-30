@@ -26,7 +26,7 @@ def database_with_one_record_added_by_api_call():
 
 
 @fixture
-def database_with_one_record_added_by_api_call(empty_mongodb_database):
+def database_with_one_user_added_by_api_call(empty_mongodb_database):
     test_data = {'username': ['test_user'], 'pass': ['11aa55ee22bb']}
     get('http://0.0.0.0:7999/user_create', params=test_data)
     yield
