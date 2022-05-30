@@ -1,0 +1,20 @@
+[BurlyPronghorn 0_1]
+src:
+    - MongoDB class with insert, find, delete methods
+    - Api, Find, Insert, Delete classes with routed index method
+automated_tests:
+    - api unit and regular tests added
+    - mongodb unit tests added
+jenkins:
+    - main Jenkinsfile added
+    - promote job Jenkinsfile added
+utilities:
+    - pytest.ini, tox.ini, conftest.py, requirements.txt added
+    - Dockerfile, docker-compose.yml added
+tools:
+    - generate_html_report_from_xml.py added
+    - scan_for_skipped_tests.py added
+    - check_release_doc_files.py added
+doc:
+    - README.md file added
+    - 0_1 release files added
