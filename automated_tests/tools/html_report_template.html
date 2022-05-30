@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>results.html</h1>
+<p style="color:grey;font-size:12px">Report generated on {{ date }}</p>
+<h2>Summary</h2>
+<p>Tests: {{ number_of_tests }}</p>
+<h2>Results</h2>
+ <table>
+  <tr>
+    <th>Test</th>
+    <th>Result</th>
+  </tr>
+     {% for test_name in tests %}
+  <tr>
+    <td>{{ test_name }}</td>
+    <td style="color:green">passed</td>
+  </tr>
+     {% endfor %}
+</table>
+</body>
+</html>
