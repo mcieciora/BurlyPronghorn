@@ -169,7 +169,7 @@ def test__regression__insert_find_delete_record():
 
 @mark.regression
 def test__regression__insert_user_too_short_payload():
-    test_data = {'username': ['test_user']},
+    test_data = {'username': 'test_user'},
     return_data = get('http://0.0.0.0:7999/user_create', params=test_data)
     assert return_data.status_code == 400, f'Status code is not 400: {return_data.reason}'
     assert 'Incorrect payload' in str(return_data.content), return_data.content
@@ -177,7 +177,7 @@ def test__regression__insert_user_too_short_payload():
 
 @mark.regression
 def test__regression__insert_user_user_too_long_payload():
-    test_data = {'username': ['test_user'], 'pass': ['11aa55ee22bb'], 'additional_key': ['value']}
+    test_data = {'username': 'test_user', 'pass': '11aa55ee22bb', 'additional_key': 'value'}
     return_data = get('http://0.0.0.0:7999/user_create', params=test_data)
     assert return_data.status_code == 400, f'Status code is not 400: {return_data.reason}'
     assert 'Incorrect payload' in str(return_data.content), return_data.content
@@ -185,7 +185,7 @@ def test__regression__insert_user_user_too_long_payload():
 
 @mark.regression
 def test__regression__insert_user_wrong_keys_in_payload():
-    test_data = {'user': ['test_user'], 'password': ['11aa55ee22bb']}
+    test_data = {'user': 'test_user', 'password': '11aa55ee22bb'}
     return_data = get('http://0.0.0.0:7999/user_create', params=test_data)
     assert return_data.status_code == 400, f'Status code is not 400: {return_data.reason}'
     assert 'Incorrect payload' in str(return_data.content), return_data.content
@@ -200,14 +200,14 @@ def test__regression__insert_user_repeated_keys_in_payload():
 
 @mark.regression
 def test__regression__insert_user_basic_payload():
-    test_data = {'username': ['test_user'], 'pass': ['11aa55ee22bb']}
+    test_data = {'username': 'test_user', 'pass': '11aa55ee22bb'}
     return_data = get('http://0.0.0.0:7999/user_create', params=test_data)
     assert return_data.status_code == 200, f'Status code is not 200: {return_data.reason}'
 
 
 @mark.regression
 def test__regression__insert_user_empty_value():
-    test_data = {'username': [''], 'pass': ['']}
+    test_data = {'username': '', 'pass': ''}
     return_data = get('http://0.0.0.0:7999/user_create', params=test_data)
     assert return_data.status_code == 400, f'Status code is not 400: {return_data.reason}'
     assert 'Incorrect payload' in str(return_data.content), return_data.content
@@ -215,7 +215,7 @@ def test__regression__insert_user_empty_value():
 
 @mark.regression
 def test__regression__insert_user_same_record_two_times(database_with_one_record_added_by_api_call):
-    test_data = {'username': ['test_user'], 'pass': ['11aa55ee22bb']}
+    test_data = {'username': 'test_user', 'pass': '11aa55ee22bb'}
     return_data = get('http://0.0.0.0:7999/user_create', params=test_data)
     assert return_data.status_code == 400, f'Status code is not 400: {return_data.reason}'
     assert '{"status": "Object already exists"}]}' in str(return_data.content), return_data.content
