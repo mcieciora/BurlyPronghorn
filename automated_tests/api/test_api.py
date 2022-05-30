@@ -167,14 +167,6 @@ def test__regression__insert_find_delete_record():
     assert '{"data": []}' in str(return_data.content), return_data.content
 
 
-
-
-
-
-
-
-
-
 @mark.regression
 def test__regression__insert_user_too_short_payload():
     test_data = {'username': ['test_user']},
