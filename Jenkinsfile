@@ -7,7 +7,8 @@ pipeline {
                     steps {
                         script {
                             dir('automated_tests/') {
-                                sh 'tox -e lint'
+                                sh 'tox -e lint src'
+                                sh 'tox -e lint automated_tests'
                             }
                         }
                     }
@@ -139,7 +140,7 @@ pipeline {
                     }
                     steps {
                         script {
-                            def build_version = '0_1'
+                            def build_version = '0_2'
                             dir('automated_tests/tools') {
                                 def script_result = sh(script: "python3.10 check_release_doc_files.py ${build_version}", returnStdout: true)
                                 if (script_result.contains('[ERR]')) {

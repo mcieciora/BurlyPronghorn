@@ -7,6 +7,7 @@ from src.mongodb import MongoDb
 def empty_mongodb_database():
     database = MongoDb()
     database.db.drop_collection('main')
+    database.db.drop_collection('users')
     yield database
 
 
@@ -18,8 +19,23 @@ def mongodb_database_with_one_record(empty_mongodb_database):
 
 
 @fixture
+def mongodb_database_with_one_user(empty_mongodb_database):
+    test_user = {'username': 'test_user', 'pass': '11aa55ee22bb'}
+    empty_mongodb_database.insert_user(test_user)
+    yield empty_mongodb_database
+
+
+@fixture
 def database_with_one_record_added_by_api_call():
     test_data = {'object_name': 'test_name', 'note': 'example_note', 'related_tasks': 'NaN', 'active_days': '0'}
     get('http://0.0.0.0:7999/insert', params=test_data)
     yield
     get('http://0.0.0.0:7999/delete', params={'object_name': 'test_name'})
+
+
+@fixture
+def database_with_one_user_added_by_api_call():
+    test_data = {'username': ['test_user'], 'pass': ['11aa55ee22bb']}
+    get('http://0.0.0.0:7999/user_create', params=test_data)
+    yield
+    get('http://0.0.0.0:7999/user_delete', params={'username': ['test_user']})

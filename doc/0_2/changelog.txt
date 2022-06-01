@@ -1,0 +1,10 @@
+[BurlyPronghorn 0_2]
+src:
+    - UserCreate and UserDelete classes added
+    - insert_user and delete_user methods added in mongodb
+automated_tests:
+    - user_create and user_delete unit and regression tests added
+jenkins:
+    - pycodestyle replaced by pylint
+doc:
+    - 0_2 release files added
