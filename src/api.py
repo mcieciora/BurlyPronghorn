@@ -9,7 +9,8 @@ def index(request_type):
         'insert': Insert,
         'find': Find,
         'delete': Delete,
-        'user_create': UserCreate
+        'user_create': UserCreate,
+        'user_delete': UserDelete
     }
     payload = request.query.dict
     try:
@@ -101,9 +102,9 @@ class Delete(Api):
             return HTTPResponse(status=400, body=dict(data=[{'status': 'No such object'}]))
 
 
-class UserCreate:
+class UserCreate(Api):
     def __init__(self, payload_dict):
-        self.payload_dict = payload_dict
+        super().__init__(payload_dict=payload_dict)
 
     def verify_payload(self):
         return_value = True
@@ -119,6 +120,28 @@ class UserCreate:
             return dict(data=[{'status': 'OK'}])
         else:
             return HTTPResponse(status=400, body=dict(data=[{'status': 'User already exists'}]))
+
+
+class UserDelete(Api):
+    def __init__(self, payload_dict):
+        super().__init__(payload_dict=payload_dict)
+
+    def verify_payload(self):
+        # TODO refactor and simplify
+        return_value = True
+        expected_keys = ['username']
+        for key, value in self.payload_dict.items():
+            if key not in expected_keys:
+                return_value = False
+            if value == '':
+                return_value = False
+        return return_value
+
+    def action(self):
+        if MongoDb().delete_user(self.payload_dict):
+            return dict(data=[{"status": 'OK'}])
+        else:
+            return HTTPResponse(status=400, body=dict(data=[{'status': 'No such user'}]))
 
 
 if __name__ == '__main__':

@@ -63,9 +63,32 @@ def test__unit__insert_user_one_record(empty_mongodb_database):
 
 
 @mark.unittests
-def test__unit__insert_user_same_record_two_times(mongodb_database_with_one_record):
+def test__unit__insert_user_same_record_two_times(mongodb_database_with_one_user):
     test_data = {'username': 'test_user', 'pass': '11aa55ee22bb'}
-    return_status = mongodb_database_with_one_record.insert_user(test_data)
+    return_status = mongodb_database_with_one_user.insert_user(test_data)
     assert return_status is False, f'Incorrect return_status value: {return_status}'
-    return_data = list(mongodb_database_with_one_record.db['users'].find())
+    return_data = list(mongodb_database_with_one_user.db['users'].find())
+    assert len(return_data) == 1, f'Incorrect return data length: {return_data}'
+
+
+@mark.unittests
+def test__unit__delete_user_one_record(mongodb_database_with_one_user):
+    return_value = mongodb_database_with_one_user.delete_user({'username': 'test_user'})
+    assert return_value is True, f'Incorrect return data value: {return_value}'
+    return_data = list(mongodb_database_with_one_user.db['users'].find())
+    assert len(return_data) == 0, f'Incorrect return data length: {return_data}'
+
+
+@mark.unittests
+def test__unit__delete_user_nonexistent_record_empty_database(empty_mongodb_database):
+    return_value = empty_mongodb_database.delete_user({'username': 'test_user'})
+    assert return_value is False, f'Incorrect return data value: {return_value}'
+    return_data = list(empty_mongodb_database.db['users'].find())
+    assert len(return_data) == 0, f'Incorrect return data length: {return_data}'
+
+
+@mark.unittests
+def test__unit__delete_user_nonexistent_record(mongodb_database_with_one_user):
+    mongodb_database_with_one_user.delete_user({'username': 'no_name'})
+    return_data = list(mongodb_database_with_one_user.db['users'].find())
     assert len(return_data) == 1, f'Incorrect return data length: {return_data}'

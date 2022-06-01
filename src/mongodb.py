@@ -35,3 +35,10 @@ class MongoDb:
         else:
             self.main.delete_one(query)
             return True
+
+    def delete_user(self, query):
+        if len(list(self.users.find(query))) == 0:
+            return False
+        else:
+            self.users.delete_one(query)
+            return True
