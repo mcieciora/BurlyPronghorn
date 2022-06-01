@@ -6,14 +6,9 @@ class MongoDb:
         self.client = MongoClient(host='mongodb', port=27017)
         self.db = self.client['burly_pronghorn']
         self.main = self.db['main']
+        self.users = self.db['users']
 
     def insert(self, data):
-        """
-        Insert one document to mongo Database.
-
-        :param data: validated data dict
-        :return: None
-        """
         return_value = True
         query = {'object_name': data['object_name']}
         if len(list(self.main.find(query))) == 0:
@@ -22,24 +17,28 @@ class MongoDb:
             return_value = False
         return return_value
 
-    def find(self, query):
-        """
-        Find one document in mongo Database.
+    def insert_user(self, data):
+        return_value = True
+        query = {'username': data['username']}
+        if len(list(self.users.find(query))) == 0:
+            self.users.insert_one(data)
+        else:
+            return_value = False
+        return return_value
 
-        :param query: query dict
-        :return: all queried objects as list of dictionaries
-        """
+    def find(self, query):
         return list(self.main.find(query, projection={'_id': False}))
 
     def delete(self, query):
-        """
-        Delete one document from mongo Database.
-
-        :param query: query dict
-        :return: None
-        """
         if len(list(self.main.find(query))) == 0:
             return False
         else:
             self.main.delete_one(query)
+            return True
+
+    def delete_user(self, query):
+        if len(list(self.users.find(query))) == 0:
+            return False
+        else:
+            self.users.delete_one(query)
             return True
