@@ -1,5 +1,10 @@
 pipeline {
     agent any
+
+    options {
+        buildDiscarder(logRotator(daysToKeepStr: '14'))
+    }
+
     stages {
         stage('Prepare for tests') {
             parallel {
